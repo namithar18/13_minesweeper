@@ -34,29 +34,41 @@ class Board:
         return sum(pos in self.mines for pos in self.neighbors(r, c))
 
     def reveal(self, start):
+        """Flood-fill reveal starting from start.
+
+        Returns True if a mine was hit, False otherwise.
+        Mine cells are never added to self.revealed so that won() stays accurate.
+        Flagged cells are skipped (both as start and during expansion).
+        """
+        if start in self.flags:
+            return False
         stack = [start]
         hit_mine = False
         while stack:
             pos = stack.pop()
             if pos in self.revealed or pos in self.flags:
                 continue
-            r, c = pos
-            self.revealed.add(pos)
             if pos in self.mines:
                 hit_mine = True
                 continue
+            r, c = pos
+            self.revealed.add(pos)
             if self.adjacent_mines(r, c) == 0:
                 stack.extend(n for n in self.neighbors(r, c) if n not in self.revealed)
         return hit_mine
 
     def toggle_flag(self, pos):
+        """Toggle a flag on an unrevealed cell.
+
+        Returns 'placed', 'removed', or None if the cell is already revealed.
+        """
         if pos in self.revealed:
-            return False
+            return None
         if pos in self.flags:
             self.flags.remove(pos)
-        else:
-            self.flags.add(pos)
-        return True
+            return 'removed'
+        self.flags.add(pos)
+        return 'placed'
 
     def won(self):
         return len(self.revealed) == self.rows * self.cols - self.mine_total

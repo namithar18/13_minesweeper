@@ -47,10 +47,24 @@ class Minesweeper:
                 continue
 
             if parts[0] == "f":
-                self.board.toggle_flag((r, c))
+                result = self.board.toggle_flag((r, c))
+                if result == "placed":
+                    print("Flag placed.")
+                elif result == "removed":
+                    print("Flag removed.")
+                else:
+                    print("Cannot flag a revealed cell.")
                 continue
 
-            if self.board.reveal((r, c)):
+            pos = (r, c)
+            if pos in self.board.flags:
+                print("Remove the flag first.")
+                continue
+            if pos in self.board.revealed:
+                print("Already revealed.")
+                continue
+
+            if self.board.reveal(pos):
                 self.display(reveal_mines=True)
                 print("BOOM! You hit a mine.")
                 return

@@ -1,13 +1,43 @@
-from board import Board
+from board import Board, DIFFICULTY
 
 
 class Minesweeper:
     def __init__(self):
-        self.board = Board()
+        preset = self._choose_difficulty()
+        self.board = Board(
+            rows=preset["rows"],
+            cols=preset["cols"],
+            mines=preset["mines"],
+        )
+
+    # ------------------------------------------------------------------
+    # Difficulty selection
+    # ------------------------------------------------------------------
+
+    def _choose_difficulty(self):
+        """Prompt the player to pick a difficulty and return its preset dict."""
+        print("Minesweeper")
+        print("Select difficulty:  e = Easy (6x6, 6 mines)")
+        print("                    m = Medium (10x10, 15 mines)")
+        print("                    h = Hard (14x14, 35 mines)")
+        while True:
+            choice = input("Difficulty [e/m/h]: ").strip().lower()
+            if choice in DIFFICULTY:
+                preset = DIFFICULTY[choice]
+                print(f"{preset['label']} selected.")
+                return preset
+            print("Please enter e, m, or h.")
+
+    # ------------------------------------------------------------------
+    # Display
+    # ------------------------------------------------------------------
 
     def display(self, reveal_mines=False):
         b = self.board
-        print("\n   " + " ".join(str(c + 1) for c in range(b.cols)))
+        # Column header — pad to match the row-number prefix width
+        col_width = len(str(b.cols))
+        row_prefix = " " * (col_width + 2)
+        print("\n" + row_prefix + " ".join(f"{c + 1:{col_width}}" for c in range(b.cols)))
         for r in range(b.rows):
             cells = []
             for c in range(b.cols):
@@ -23,11 +53,15 @@ class Minesweeper:
                 else:
                     ch = str(b.adjacent_mines(r, c))
                 cells.append(ch)
-            print(f"{r + 1:2} " + " ".join(cells))
+            print(f"{r + 1:{col_width}} " + " ".join(f"{ch:{col_width}}" for ch in cells))
+
+    # ------------------------------------------------------------------
+    # Main game loop
+    # ------------------------------------------------------------------
 
     def run(self):
-        print("Minesweeper")
-        print("Commands: r row col | f row col | q")
+        b = self.board
+        print(f"Commands: r row col | f row col | q   (board: {b.rows}x{b.cols}, {b.mine_total} mines)")
         while True:
             self.display()
             raw = input("> ").strip().lower()

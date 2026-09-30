@@ -4,6 +4,14 @@ DEFAULT_ROWS = 6
 DEFAULT_COLS = 6
 DEFAULT_MINES = 6
 
+# Difficulty presets — all in memory, no external file needed.
+# Keys are the single-letter shortcuts accepted at startup.
+DIFFICULTY = {
+    "e": {"label": "Easy",   "rows":  6, "cols":  6, "mines":  6},
+    "m": {"label": "Medium", "rows": 10, "cols": 10, "mines": 15},
+    "h": {"label": "Hard",   "rows": 14, "cols": 14, "mines": 35},
+}
+
 
 class Board:
     def __init__(self, rows=DEFAULT_ROWS, cols=DEFAULT_COLS, mines=DEFAULT_MINES):

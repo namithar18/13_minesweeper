@@ -98,10 +98,13 @@ class Minesweeper:
                 print("Already revealed.")
                 continue
 
-            if self.board.reveal(pos):
+            hit_mine, count = self.board.reveal(pos)
+            if hit_mine:
                 self.display(reveal_mines=True)
                 print("BOOM! You hit a mine.")
                 return
+            cell_word = "cell" if count == 1 else "cells"
+            print(f"Revealed {count} {cell_word}.")
             if self.board.won():
                 self.display()
                 print("You cleared the board!")

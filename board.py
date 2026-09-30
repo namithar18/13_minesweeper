@@ -44,12 +44,16 @@ class Board:
     def reveal(self, start):
         """Flood-fill reveal starting from start.
 
-        Returns True if a mine was hit, False otherwise.
+        Returns (hit_mine, newly_revealed_count).
+        - hit_mine: True if a mine was uncovered.
+        - newly_revealed_count: number of safe cells added to self.revealed
+          by this single player action (used for action-level feedback).
         Mine cells are never added to self.revealed so that won() stays accurate.
         Flagged cells are skipped (both as start and during expansion).
         """
         if start in self.flags:
-            return False
+            return False, 0
+        before = len(self.revealed)
         stack = [start]
         hit_mine = False
         while stack:
@@ -63,7 +67,7 @@ class Board:
             self.revealed.add(pos)
             if self.adjacent_mines(r, c) == 0:
                 stack.extend(n for n in self.neighbors(r, c) if n not in self.revealed)
-        return hit_mine
+        return hit_mine, len(self.revealed) - before
 
     def toggle_flag(self, pos):
         """Toggle a flag on an unrevealed cell.

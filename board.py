@@ -27,7 +27,7 @@ class Board:
                 if dr == 0 and dc == 0:
                     continue
                 nr, nc = r + dr, c + dc
-                if 0 <= nr <= self.rows and 0 <= nc <= self.cols:
+                if 0 <= nr < self.rows and 0 <= nc < self.cols:
                     yield nr, nc
 
     def adjacent_mines(self, r, c):
